@@ -774,12 +774,12 @@ function createShootingStar(){
   const star = document.createElement("div");
   star.className = "shooting-star";
 
-  // 시작 위치 (왼쪽 위 랜덤)
-  star.style.top = (Math.random() * window.innerHeight * 0.25 + 10) + "px";
+  // 왼쪽 위 랜덤 위치
+  star.style.top = (Math.random() * window.innerHeight * 0.3 + 10) + "px";
   star.style.left = (Math.random() * window.innerWidth * 0.25) + "px";
 
-  // 항상 같은 방향
-  star.style.setProperty("--shootX", "520px");
+  // 항상 왼쪽위 → 오른쪽아래
+  star.style.setProperty("--shootX", "460px");
   star.style.setProperty("--shootY", "340px");
   star.style.setProperty("--shootRotate", "35deg");
 
