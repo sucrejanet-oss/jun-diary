@@ -565,7 +565,7 @@ const talkLines=[
 ];
 
 const BEAR_FRAME_MS = 350;
-const FOOTPRINT_MS = 900;
+const FOOTPRINT_MS = 520;
 const TALK_INTERVAL_MS = 9000;
 const TALK_DURATION_MS = 1800;
 
@@ -752,12 +752,14 @@ async function changeMonth(diff){
 }
 
 function syncBubblePosition(){
+
   if(bubble.classList.contains("hidden")) return;
 
   const r = bear.getBoundingClientRect();
-  bubble.style.left = Math.max(12, Math.min(window.innerWidth - 220, r.left + 18)) + "px";
-  bubble.style.top = Math.max(12, r.top - 54) + "px";
-  bubble.style.bottom = "auto";
+
+  bubble.style.left = (r.left + 20) + "px";
+  bubble.style.top = (r.top - 50) + "px";
+
 }
 
 function hideBubble(){
@@ -781,8 +783,8 @@ function createShootingStar(){
   star.style.left = (Math.random() * window.innerWidth) + "px";
 
   // 항상 왼쪽위 → 오른쪽아래
-  star.style.setProperty("--shootX", window.innerWidth + "px");
-  star.style.setProperty("--shootY", "320px");
+  star.style.setProperty("--shootX", "420px");
+  star.style.setProperty("--shootY", "260px");
   star.style.setProperty("--shootRotate", "35deg");
 
   document.body.appendChild(star);
