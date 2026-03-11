@@ -47,9 +47,9 @@ body::before{
 }
 .hidden{display:none!important}
 .lock-bear{
-  width:120px;
-  display:block;
-  margin:0 auto 10px;
+  width:140px;
+  height:140px;
+  object-fit:contain;
 
   image-rendering:pixelated;
   image-rendering:-moz-crisp-edges;
@@ -502,7 +502,7 @@ function init(){
   let interval=2600;
   if(hour>=21||hour<=5) interval=1400;
   setInterval(createShootingStar, interval);
-  setInterval(dropFootprint, 1100);
+  setInterval(dropFootprint, 450);
   setInterval(showBearTalk, 12000);
   setInterval(refreshBearMsg, 9000);
 
@@ -632,9 +632,14 @@ function dropFootprint(){
 
 function showBearTalk(){
   const r=bear.getBoundingClientRect();
+
   bubble.textContent=talkLines[Math.floor(Math.random()*talkLines.length)];
-  bubble.style.left=Math.max(16, Math.min(window.innerWidth-240, r.left-20))+"px";
+
+  bubble.style.left=(r.left+40)+"px";
+  bubble.style.bottom="120px";
+
   bubble.classList.remove("hidden");
+
   setTimeout(()=>bubble.classList.add("hidden"),4000);
 }
 </script>
