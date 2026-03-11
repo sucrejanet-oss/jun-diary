@@ -774,37 +774,22 @@ function createShootingStar(){
   const star = document.createElement("div");
   star.className = "shooting-star";
 
-  const fromRight = Math.random() > 0.5;
+  // 시작 위치 (왼쪽 위 랜덤)
+  star.style.top = (Math.random() * window.innerHeight * 0.25 + 10) + "px";
+  star.style.left = (Math.random() * window.innerWidth * 0.25) + "px";
 
-  if(fromRight){
-    // 오른쪽 위 -> 왼쪽 아래
-    star.style.top = (Math.random() * window.innerHeight * 0.35 + 10) + "px";
-    star.style.left = (window.innerWidth + 80) + "px";
-    star.style.setProperty("--shootX", "-460px");
-    star.style.setProperty("--shootY", "340px");
-    star.style.setProperty("--shootRotate", "-35deg");
+  // 항상 같은 방향
+  star.style.setProperty("--shootX", "520px");
+  star.style.setProperty("--shootY", "340px");
+  star.style.setProperty("--shootRotate", "35deg");
 
-    // 머리는 왼쪽, 꼬리는 오른쪽
-    star.style.setProperty("--shootBg", "linear-gradient(90deg, rgba(255,255,255,.98), rgba(255,255,255,0))");
-    star.style.setProperty("--headLeft", "0");
-    star.style.setProperty("--headRight", "auto");
-
-  }else{
-    // 왼쪽 위 -> 오른쪽 아래
-    star.style.top = (Math.random() * window.innerHeight * 0.35 + 10) + "px";
-    star.style.left = "-140px";
-    star.style.setProperty("--shootX", "460px");
-    star.style.setProperty("--shootY", "340px");
-    star.style.setProperty("--shootRotate", "35deg");
-
-    // 머리는 오른쪽, 꼬리는 왼쪽
-    star.style.setProperty("--shootBg", "linear-gradient(270deg, rgba(255,255,255,.98), rgba(255,255,255,0))");
-    star.style.setProperty("--headLeft", "auto");
-    star.style.setProperty("--headRight", "0");
-  }
+  // 머리 방향
+  star.style.setProperty("--shootBg", "linear-gradient(270deg, rgba(255,255,255,.98), rgba(255,255,255,0))");
+  star.style.setProperty("--headLeft", "auto");
+  star.style.setProperty("--headRight", "0");
 
   document.body.appendChild(star);
-  setTimeout(()=>star.remove(), SHOOT_DURATION);
+  setTimeout(()=>star.remove(), 1800);
 }
 
 function dropFootprint(){
@@ -818,7 +803,7 @@ function dropFootprint(){
   setTimeout(()=>f.remove(),3600);
 }
 
-showBearTalk
+
 async function backupDiary(){
   const { data, error } = await sb
     .from("diary")
