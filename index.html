@@ -46,7 +46,12 @@ body::before{
   to{opacity:.38}
 }
 .hidden{display:none!important}
-
+.lock-bear{
+  width:140px;
+  image-rendering:pixelated;
+  display:block;
+  margin:0 auto 10px;
+}
 .shell{
   min-height:100vh;
   display:flex;
@@ -309,7 +314,9 @@ button.primary{
 
 <div class="shell">
   <div class="lock" id="lockScreen">
-    <div class="emoji">🧸</div>
+    <div class="emoji">
+      <img src="bear.png" class="lock-bear">
+    </div>
     <h2>비밀번호를 입력하세요</h2>
     <p>하준이의 소중한 하루를 담아두는 비밀 일기장이에요</p>
     <input type="password" id="pw" />
@@ -319,7 +326,7 @@ button.primary{
 
   <div class="app hidden" id="app">
     <div class="header">
-      <h1>🧸 하준이 육아일기</h1>
+      <h1>하준이 육아일기</h1>
       <p>오늘의 웃음과 추억을 기록하는 밤하늘 다이어리</p>
     </div>
 
