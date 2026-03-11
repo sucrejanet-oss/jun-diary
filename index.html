@@ -250,8 +250,8 @@ button.primary{
   position:fixed;
   width:120px;
   height:2px;
-  background:var(--shootBg, linear-gradient(90deg, rgba(255,255,255,.95), rgba(255,255,255,0)));
-  transform:rotate(var(--shootRotate, -35deg));
+  background:linear-gradient(90deg, rgba(255,255,255,.95), rgba(255,255,255,0));
+  transform:rotate(-35deg);
   filter:drop-shadow(0 0 6px rgba(255,255,255,.8));
   animation:shoot 1.8s ease-out forwards;
   pointer-events:none;
@@ -261,24 +261,24 @@ button.primary{
 .shooting-star::before{
   content:"";
   position:absolute;
-  left:var(--headLeft, auto);
-  right:var(--headRight, 0);
-  top:-2px;
+  right:0;
+  top:-3px;
   width:7px;
   height:7px;
   border-radius:50%;
   background:#fff;
   box-shadow:0 0 10px #fff;
 }
+
 @keyframes shoot{
   0%{
     opacity:0;
-    transform:translate(0,0) rotate(var(--shootRotate, -35deg));
+    transform:translate(0,0) rotate(-35deg);
   }
   10%{opacity:1;}
   100%{
     opacity:0;
-    transform:translate(var(--shootX, -460px), var(--shootY, 340px)) rotate(var(--shootRotate, -35deg));
+    transform:translate(420px,260px) rotate(-35deg);
   }
 }
 .shell,
@@ -775,19 +775,17 @@ const SHOOT_DURATION = 1800;
 let bubbleHideTimer = null;
 
 function createShootingStar(){
-  const star = document.createElement("div");
-  star.className = "shooting-star";
+  const star=document.createElement("div");
+  star.className="shooting-star";
 
-  // 화면 전체 랜덤 위치
-  star.style.top = (Math.random() * window.innerHeight * 0.35) + "px";
-  star.style.left = (Math.random() * window.innerWidth) + "px";
+  // 화면 위쪽 랜덤 위치
+  star.style.top=(Math.random()*window.innerHeight*0.35)+"px";
 
-  // 항상 왼쪽위 → 오른쪽아래
-  star.style.setProperty("--shootX", "420px");
-  star.style.setProperty("--shootY", "260px");
-  star.style.setProperty("--shootRotate", "35deg");
+  // 화면 가로 전체 랜덤
+  star.style.left=(Math.random()*window.innerWidth)+"px";
 
   document.body.appendChild(star);
+
   setTimeout(()=>star.remove(),1800);
 }
   
