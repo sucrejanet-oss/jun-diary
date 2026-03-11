@@ -256,6 +256,19 @@ button.primary{
   100%{opacity:0; transform:translate(-460px,340px) rotate(-35deg)}
 }
 
+.secondary{
+  margin-left:8px;
+  background:linear-gradient(135deg,#d9e7ff,#ffe7f2);
+}
+
+@media (max-width:900px){
+  .secondary{
+    margin-left:0;
+    margin-top:8px;
+  }
+}
+
+
 /* walking dot bear */
 .walking-bear{
   position:fixed;
@@ -421,6 +434,9 @@ button.primary{
         </div>
         <textarea id="text" placeholder="오늘 하준이는 뭐하고 놀았어?"></textarea>
         <button class="primary" onclick="save()">일기 저장</button>
+        <button class="primary secondary" type="button" onclick="backupDiary()">전체 일기 백업</button>
+        <button class="primary secondary" type="button" onclick="document.getElementById('restoreFile').click()">백업 복원</button>
+        <input type="file" id="restoreFile" accept=".json" hidden onchange="restoreDiary(event)">
         <div class="note">달력 날짜를 클릭하면 저장한 일기를 다시 불러와요.</div>
         <div class="speech" id="speech">
           <span id="speechText">오늘 하준이는 뭐하고 놀았어?</span>
@@ -692,6 +708,90 @@ function showBearTalk(){
   bubble.classList.remove("hidden");
 
   setTimeout(()=>bubble.classList.add("hidden"),4000);
+}
+
+async function backupDiary(){
+  const { data, error } = await sb
+    .from("diary")
+    .select("*")
+    .order("date", { ascending: true });
+
+  if(error){
+    console.error(error);
+    speechText.textContent = "백업 중 오류가 났어요";
+    return;
+  }
+
+  const blob = new Blob(
+    [JSON.stringify(data || [], null, 2)],
+    { type: "application/json;charset=utf-8" }
+  );
+
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  const today = new Date().toISOString().slice(0,10);
+
+  a.href = url;
+  a.download = `hajun-diary-backup-${today}.json`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+
+  speech.classList.remove("pop");
+  void speech.offsetWidth;
+  speech.classList.add("pop");
+  speechText.textContent = "곰돌이가 백업 파일을 준비했어요!";
+}
+
+async function restoreDiary(event){
+  const file = event.target.files[0];
+  if(!file) return;
+
+  try{
+    const text = await file.text();
+    const items = JSON.parse(text);
+
+    if(!Array.isArray(items)){
+      speechText.textContent = "올바른 백업 파일이 아니에요";
+      return;
+    }
+
+    const cleaned = items
+      .filter(item => item && item.date)
+      .map(item => ({
+        date: item.date,
+        text: item.text || "",
+        weather: item.weather || "☀️ 맑음"
+      }));
+
+    if(cleaned.length === 0){
+      speechText.textContent = "복원할 데이터가 없어요";
+      return;
+    }
+
+    const { error } = await sb
+      .from("diary")
+      .upsert(cleaned, { onConflict: "date" });
+
+    if(error){
+      console.error(error);
+      speechText.textContent = "복원 중 오류가 났어요";
+      return;
+    }
+
+    await buildCalendar();
+
+    speech.classList.remove("pop");
+    void speech.offsetWidth;
+    speech.classList.add("pop");
+    speechText.textContent = "곰돌이가 일기를 다시 불러왔어요!";
+  }catch(err){
+    console.error(err);
+    speechText.textContent = "백업 파일을 읽지 못했어요";
+  }
+
+  event.target.value = "";
 }
 </script>
 </body>
