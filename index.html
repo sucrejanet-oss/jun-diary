@@ -433,10 +433,16 @@ button.primary{
 <div class="walking-bear" id="bear"></div>
 <div class="bubble hidden" id="bubble"></div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>  
 <script>
 const PASSWORD="0427";
 const PREFIX="hajun-diary-";
 const BIRTH="2023-04-12";
+
+const SUPABASE_URL = "https://mytuhgjimfjmmqxmewfd.supabase.co";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im15dHVoZ2ppbWZqbW1xeG1ld2ZkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMyMzc4NDAsImV4cCI6MjA4ODgxMzg0MH0.ooPIunXoOHbMGob_ihMSYpdO1Fl2yij-ErVelgzl-9A";
+
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 const lockScreen=document.getElementById("lockScreen");
 const app=document.getElementById("app");
@@ -522,88 +528,133 @@ function updateAge(){
 
 function key(date){ return PREFIX+date; }
 
-function save(){
-  const date=dateEl.value;
+async function save(){
+  const date = dateEl.value;
   if(!date) return;
-  localStorage.setItem(key(date), JSON.stringify({
-    text:textEl.value,
-    weather:weatherEl.value
-  }));
-  buildCalendar();
+
+  const { error } = await sb
+    .from("diary")
+    .upsert({
+      date: date,
+      text: textEl.value,
+      weather: weatherEl.value
+    }, { onConflict: "date" });
+
+  if(error){
+    console.error(error);
+    speechText.textContent = "저장 중 오류가 났어요";
+    return;
+  }
+
+  await buildCalendar();
+
   speech.classList.remove("pop");
   void speech.offsetWidth;
   speech.classList.add("pop");
-  speechText.textContent="곰돌이가 기억했어요!";
+  speechText.textContent = "곰돌이가 기억했어요!";
   createShootingStar();
 }
 
-function loadEntry(date){
-  const data=localStorage.getItem(key(date));
+async function loadEntry(date){
+  const { data, error } = await sb
+    .from("diary")
+    .select("*")
+    .eq("date", date)
+    .maybeSingle();
+
+  if(error){
+    console.error(error);
+    return;
+  }
+
   if(!data) return;
-  const obj=JSON.parse(data);
-  dateEl.value=date;
-  textEl.value=obj.text || "";
-  weatherEl.value=obj.weather || "☀️ 맑음";
-  speechText.textContent="이 날의 기록을 불러왔어!";
+
+  dateEl.value = date;
+  textEl.value = data.text || "";
+  weatherEl.value = data.weather || "☀️ 맑음";
+  speechText.textContent = "이 날의 기록을 불러왔어!";
 }
 
-function buildCalendar(){
-  calendarEl.innerHTML="";
-  monthLabel.textContent=`${viewYear}년 ${viewMonth+1}월`;
+async function buildCalendar(){
+  calendarEl.innerHTML = "";
+  monthLabel.textContent = `${viewYear}년 ${viewMonth+1}월`;
+
   const firstDay = new Date(viewYear, viewMonth, 1).getDay();
-  const lastDate = new Date(viewYear, viewMonth+1, 0).getDate();
+  const lastDate = new Date(viewYear, viewMonth + 1, 0).getDate();
   const todayStr = (new Date()).toISOString().slice(0,10);
 
-  for(let i=0;i<firstDay;i++){
-    const empty=document.createElement("div");
-    empty.className="day empty";
+  const monthStart = `${viewYear}-${String(viewMonth+1).padStart(2,"0")}-01`;
+  const monthEnd = `${viewYear}-${String(viewMonth+1).padStart(2,"0")}-${String(lastDate).padStart(2,"0")}`;
+
+  const { data, error } = await sb
+    .from("diary")
+    .select("date")
+    .gte("date", monthStart)
+    .lte("date", monthEnd);
+
+  if(error){
+    console.error(error);
+  }
+
+  const savedDates = new Set((data || []).map(item => item.date));
+
+  for(let i=0; i<firstDay; i++){
+    const empty = document.createElement("div");
+    empty.className = "day empty";
     calendarEl.appendChild(empty);
   }
 
-  let count=0;
-  for(let i=1;i<=lastDate;i++){
-    const d=`${viewYear}-${String(viewMonth+1).padStart(2,"0")}-${String(i).padStart(2,"0")}`;
-    const cell=document.createElement("div");
-    cell.className="day";
-    if(localStorage.getItem(key(d))){
+  let count = 0;
+
+  for(let i=1; i<=lastDate; i++){
+    const d = `${viewYear}-${String(viewMonth+1).padStart(2,"0")}-${String(i).padStart(2,"0")}`;
+    const cell = document.createElement("div");
+    cell.className = "day";
+
+    if(savedDates.has(d)){
       cell.classList.add("saved");
       count++;
-      const bearBadge=document.createElement("div");
-      bearBadge.className="bear-badge";
-      bearBadge.textContent="🧸";
+
+      const bearBadge = document.createElement("div");
+      bearBadge.className = "bear-badge";
+      bearBadge.textContent = "🧸";
       cell.appendChild(bearBadge);
 
-      const paw=document.createElement("div");
-      paw.className="paw";
-      paw.textContent="🐾";
+      const paw = document.createElement("div");
+      paw.className = "paw";
+      paw.textContent = "🐾";
       cell.appendChild(paw);
     }
-    if(d===todayStr) cell.classList.add("today");
-    if(dateEl.value===d) cell.classList.add("selected");
 
-    const num=document.createElement("div");
-    num.className="num";
-    num.textContent=i;
+    if(d === todayStr) cell.classList.add("today");
+    if(dateEl.value === d) cell.classList.add("selected");
+
+    const num = document.createElement("div");
+    num.className = "num";
+    num.textContent = i;
     cell.appendChild(num);
 
-    cell.onclick=()=>{
-      if(localStorage.getItem(key(d))) loadEntry(d);
-      else {
-        dateEl.value=d;
-        textEl.value="";
+    cell.onclick = async () => {
+      if(savedDates.has(d)){
+        await loadEntry(d);
+      } else {
+        dateEl.value = d;
+        textEl.value = "";
       }
-      buildCalendar();
+      await buildCalendar();
     };
+
     calendarEl.appendChild(cell);
   }
-  countEl.textContent=count+"일";
+
+  countEl.textContent = count + "일";
 }
 
-function changeMonth(diff){
+async function changeMonth(diff){
   viewMonth += diff;
   if(viewMonth < 0){ viewMonth = 11; viewYear--; }
   if(viewMonth > 11){ viewMonth = 0; viewYear++; }
-  buildCalendar();
+  await buildCalendar();
 }
 
 function refreshBearMsg(){
