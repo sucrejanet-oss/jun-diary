@@ -769,17 +769,16 @@ function refreshBearMsg(){
 
 const SHOOT_DURATION = 1800;
 let bubbleHideTimer = null;
-
 function createShootingStar(){
   const star = document.createElement("div");
   star.className = "shooting-star";
 
-  // 왼쪽 위 랜덤 위치
-  star.style.top = (Math.random() * window.innerHeight * 0.3 + 10) + "px";
+  // 항상 왼쪽 위에서 시작
+  star.style.top = (Math.random() * window.innerHeight * 0.25 + 10) + "px";
   star.style.left = (Math.random() * window.innerWidth * 0.25) + "px";
 
-  // 항상 왼쪽위 → 오른쪽아래
-  star.style.setProperty("--shootX", "460px");
+  // 항상 같은 방향 (왼쪽위 → 오른쪽아래)
+  star.style.setProperty("--shootX", "520px");
   star.style.setProperty("--shootY", "340px");
   star.style.setProperty("--shootRotate", "35deg");
 
@@ -791,7 +790,7 @@ function createShootingStar(){
   document.body.appendChild(star);
   setTimeout(()=>star.remove(), 1800);
 }
-
+  
 function dropFootprint(){
   const r=bear.getBoundingClientRect();
   const f=document.createElement("div");
