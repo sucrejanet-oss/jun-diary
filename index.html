@@ -775,7 +775,7 @@ function createShootingStar(){
 
   // 시작 위치 (왼쪽 위 랜덤)
   star.style.top = (Math.random() * window.innerHeight * 0.25 + 10) + "px";
-  star.style.left = (Math.random() * window.innerWidth * 0.25) + "px";
+  star.style.left = (Math.random() * window.innerWidth) + "px";
 
   // 화면 끝까지 이동
   star.style.setProperty("--shootX", window.innerWidth + "px");
