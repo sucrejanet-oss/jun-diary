@@ -250,18 +250,22 @@ button.primary{
   position:fixed;
   width:120px;
   height:2px;
-  background:linear-gradient(90deg, rgba(255,255,255,.95), rgba(255,255,255,0));
+  background:var(--shootBg, linear-gradient(90deg, rgba(255,255,255,.95), rgba(255,255,255,0)));
   transform:rotate(var(--shootRotate, -35deg));
   filter:drop-shadow(0 0 6px rgba(255,255,255,.8));
   animation:shoot 1.8s linear forwards;
   pointer-events:none;
   z-index:5;
 }
+
 .shooting-star::before{
   content:"";
   position:absolute;
-  right:0; top:-2px;
-  width:7px; height:7px;
+  left:var(--headLeft, auto);
+  right:var(--headRight, 0);
+  top:-2px;
+  width:7px;
+  height:7px;
   border-radius:50%;
   background:#fff;
   box-shadow:0 0 10px #fff;
@@ -571,21 +575,21 @@ function animateBear(){
 
 setInterval(animateBear, 350);
   
-function unlock(){
+async function unlock(){
   if(document.getElementById("pw").value===PASSWORD){
     lockScreen.classList.add("hidden");
     app.classList.remove("hidden");
-    init();
+    await init();
   }else{
     msg.textContent="비밀번호가 달라요";
   }
 }
 
-function init(){
+async function init(){
   const today = new Date();
   dateEl.value = today.toISOString().slice(0,10);
   updateAge();
-  buildCalendar();
+  await buildCalendar();
   refreshBearMsg();
   const hour=today.getHours();
   let interval=2600;
@@ -756,12 +760,23 @@ function createShootingStar(){
     star.style.setProperty("--shootX", "-460px");
     star.style.setProperty("--shootY", "340px");
     star.style.setProperty("--shootRotate", "-35deg");
+
+    // ⭐ 추가
+    star.style.setProperty("--shootBg", "linear-gradient(90deg, rgba(255,255,255,.95), rgba(255,255,255,0))");
+    star.style.setProperty("--headLeft", "auto");
+    star.style.setProperty("--headRight", "0");
+
   }else{
     star.style.top = (Math.random() * window.innerHeight * 0.35 + 10) + "px";
     star.style.left = "-140px";
     star.style.setProperty("--shootX", "460px");
     star.style.setProperty("--shootY", "340px");
     star.style.setProperty("--shootRotate", "35deg");
+
+    // ⭐ 추가
+    star.style.setProperty("--shootBg", "linear-gradient(270deg, rgba(255,255,255,.95), rgba(255,255,255,0))");
+    star.style.setProperty("--headLeft", "0");
+    star.style.setProperty("--headRight", "auto");
   }
 
   document.body.appendChild(star);
