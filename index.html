@@ -778,11 +778,9 @@ function createShootingStar(){
   const star=document.createElement("div");
   star.className="shooting-star";
 
-  // 화면 위쪽 랜덤 위치
+  // 화면 오른쪽 밖에서 시작
   star.style.top=(Math.random()*window.innerHeight*0.35)+"px";
-
-  // 화면 가로 전체 랜덤
-  star.style.left=(Math.random()*window.innerWidth)+"px";
+  star.style.left=(window.innerWidth + 80)+"px";
 
   document.body.appendChild(star);
 
