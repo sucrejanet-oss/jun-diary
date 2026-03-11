@@ -565,7 +565,7 @@ const talkLines=[
 ];
 
 const BEAR_FRAME_MS = 350;
-const FOOTPRINT_MS = 700;
+const FOOTPRINT_MS = 900;
 const TALK_INTERVAL_MS = 9000;
 const TALK_DURATION_MS = 1800;
 
@@ -576,6 +576,8 @@ let bearFrameIndex = 0;
 function animateBear(){
   bear.style.backgroundImage = `url(${bearFrames[bearFrameIndex]})`;
   bearFrameIndex = (bearFrameIndex + 1) % bearFrames.length;
+  bear.style.backgroundSize = "contain";
+  bear.style.backgroundRepeat = "no-repeat";
 }
 
 setInterval(animateBear, BEAR_FRAME_MS);
@@ -774,11 +776,13 @@ function createShootingStar(){
   const star = document.createElement("div");
   star.className = "shooting-star";
 
-  star.style.top = (Math.random() * window.innerHeight * 0.3) + "px";
+  // 화면 전체 랜덤 위치
+  star.style.top = (Math.random() * window.innerHeight * 0.35) + "px";
   star.style.left = (Math.random() * window.innerWidth) + "px";
 
-  star.style.setProperty("--shootX", "420px");
-  star.style.setProperty("--shootY", "300px");
+  // 항상 왼쪽위 → 오른쪽아래
+  star.style.setProperty("--shootX", window.innerWidth + "px");
+  star.style.setProperty("--shootY", "320px");
   star.style.setProperty("--shootRotate", "35deg");
 
   document.body.appendChild(star);
@@ -796,6 +800,30 @@ function dropFootprint(){
   setTimeout(()=>f.remove(),3600);
 }
 
+function showBearTalk(){
+
+  const r = bear.getBoundingClientRect();
+
+  bubble.textContent =
+    talkLines[Math.floor(Math.random() * talkLines.length)];
+
+  bubble.classList.remove("hidden");
+
+  // 곰 위치 기준 말풍선 위치
+  bubble.style.left =
+    Math.max(12, Math.min(window.innerWidth - 220, r.left + 20)) + "px";
+
+  bubble.style.top =
+    Math.max(12, r.top - 50) + "px";
+
+  bubble.style.bottom = "auto";
+
+  // 1.6초 후 말풍선 사라짐
+  setTimeout(()=>{
+    bubble.classList.add("hidden");
+  },1600);
+
+}
 
 async function backupDiary(){
   const { data, error } = await sb
