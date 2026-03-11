@@ -773,16 +773,15 @@ function createShootingStar(){
   const star = document.createElement("div");
   star.className = "shooting-star";
 
-  // 항상 왼쪽 위에서 시작
+  // 시작 위치 (왼쪽 위 랜덤)
   star.style.top = (Math.random() * window.innerHeight * 0.25 + 10) + "px";
   star.style.left = (Math.random() * window.innerWidth * 0.25) + "px";
 
-  // 항상 같은 방향 (왼쪽위 → 오른쪽아래)
-  star.style.setProperty("--shootX", "520px");
+  // 화면 끝까지 이동
+  star.style.setProperty("--shootX", window.innerWidth + "px");
   star.style.setProperty("--shootY", "340px");
   star.style.setProperty("--shootRotate", "35deg");
 
-  // 머리 방향
   star.style.setProperty("--shootBg", "linear-gradient(270deg, rgba(255,255,255,.98), rgba(255,255,255,0))");
   star.style.setProperty("--headLeft", "auto");
   star.style.setProperty("--headRight", "0");
