@@ -253,7 +253,7 @@ button.primary{
   background:var(--shootBg, linear-gradient(90deg, rgba(255,255,255,.95), rgba(255,255,255,0)));
   transform:rotate(var(--shootRotate, -35deg));
   filter:drop-shadow(0 0 6px rgba(255,255,255,.8));
-  animation:shoot 1.8s linear forwards;
+  animation:shoot 1.8s ease-out forwards;
   pointer-events:none;
   z-index:5;
 }
@@ -564,6 +564,11 @@ const talkLines=[
   "오늘 웃은 순간 적어볼까?"
 ];
 
+const BEAR_FRAME_MS = 350;
+const FOOTPRINT_MS = 700;
+const TALK_INTERVAL_MS = 9000;
+const TALK_DURATION_MS = 1800;
+
 // walking bear using 2 images
 const bearFrames = ["bear1.png","bear2.png"];
 let bearFrameIndex = 0;
@@ -573,7 +578,7 @@ function animateBear(){
   bearFrameIndex = (bearFrameIndex + 1) % bearFrames.length;
 }
 
-setInterval(animateBear, 350);
+setInterval(animateBear, BEAR_FRAME_MS);
   
 async function unlock(){
   if(document.getElementById("pw").value===PASSWORD){
@@ -595,10 +600,10 @@ async function init(){
   let interval=2600;
   if(hour>=21||hour<=5) interval=1400;
   setInterval(createShootingStar, interval);
-  setInterval(dropFootprint, 450);
-  setInterval(showBearTalk, 12000);
+  setInterval(dropFootprint, FOOTPRINT_MS);
+  setInterval(showBearTalk, TALK_INTERVAL_MS);
   setInterval(refreshBearMsg, 9000);
-
+  setInterval(syncBubblePosition, 80);
   animateBear();
 }
 
@@ -744,30 +749,62 @@ async function changeMonth(diff){
   await buildCalendar();
 }
 
+function syncBubblePosition(){
+  if(bubble.classList.contains("hidden")) return;
+
+  const r = bear.getBoundingClientRect();
+  bubble.style.left = Math.max(12, Math.min(window.innerWidth - 220, r.left + 18)) + "px";
+  bubble.style.top = Math.max(12, r.top - 54) + "px";
+  bubble.style.bottom = "auto";
+}
+
+function hideBubble(){
+  bubble.classList.add("hidden");
+}
+
+
 function refreshBearMsg(){
   bearMsg.textContent = bearLines[Math.floor(Math.random()*bearLines.length)];
 }
+
+const SHOOT_DURATION = 1800;
+let bubbleHideTimer = null;
 
 function createShootingStar(){
   const star = document.createElement("div");
   star.className = "shooting-star";
 
-  star.style.top = (Math.random() * window.innerHeight * 0.35 + 10) + "px";
-  star.style.left = (Math.random() * window.innerWidth * 0.6 + window.innerWidth * 0.35) + "px";
+  const fromRight = Math.random() > 0.5;
 
-  star.style.setProperty("--shootX", "-420px");
-  star.style.setProperty("--shootY", "260px");
-  star.style.setProperty("--shootRotate", "-32deg");
-  star.style.setProperty("--shootBg", "linear-gradient(90deg, rgba(255,255,255,.95), rgba(255,255,255,0))");
-  star.style.setProperty("--headLeft", "auto");
-  star.style.setProperty("--headRight", "0");
+  if(fromRight){
+    // 오른쪽 위 -> 왼쪽 아래
+    star.style.top = (Math.random() * window.innerHeight * 0.35 + 10) + "px";
+    star.style.left = (window.innerWidth + 80) + "px";
+    star.style.setProperty("--shootX", "-460px");
+    star.style.setProperty("--shootY", "340px");
+    star.style.setProperty("--shootRotate", "-35deg");
+
+    // 머리는 왼쪽, 꼬리는 오른쪽
+    star.style.setProperty("--shootBg", "linear-gradient(90deg, rgba(255,255,255,.98), rgba(255,255,255,0))");
+    star.style.setProperty("--headLeft", "0");
+    star.style.setProperty("--headRight", "auto");
+
+  }else{
+    // 왼쪽 위 -> 오른쪽 아래
+    star.style.top = (Math.random() * window.innerHeight * 0.35 + 10) + "px";
+    star.style.left = "-140px";
+    star.style.setProperty("--shootX", "460px");
+    star.style.setProperty("--shootY", "340px");
+    star.style.setProperty("--shootRotate", "35deg");
+
+    // 머리는 오른쪽, 꼬리는 왼쪽
+    star.style.setProperty("--shootBg", "linear-gradient(270deg, rgba(255,255,255,.98), rgba(255,255,255,0))");
+    star.style.setProperty("--headLeft", "auto");
+    star.style.setProperty("--headRight", "0");
+  }
 
   document.body.appendChild(star);
-  setTimeout(()=>star.remove(),1800);
-}
-
-  document.body.appendChild(star);
-  setTimeout(()=>star.remove(),1800);
+  setTimeout(()=>star.remove(), SHOOT_DURATION);
 }
 
 function dropFootprint(){
@@ -781,19 +818,7 @@ function dropFootprint(){
   setTimeout(()=>f.remove(),3600);
 }
 
-function showBearTalk(){
-  const r=bear.getBoundingClientRect();
-
-  bubble.textContent=talkLines[Math.floor(Math.random()*talkLines.length)];
-
-  bubble.style.left=(r.left+40)+"px";
-  bubble.style.bottom="120px";
-
-  bubble.classList.remove("hidden");
-
-  setTimeout(()=>bubble.classList.add("hidden"),4000);
-}
-
+showBearTalk
 async function backupDiary(){
   const { data, error } = await sb
     .from("diary")
