@@ -9,13 +9,11 @@
 *{box-sizing:border-box}
 :root{
   --navy:#0f1b3d;
-  --navy-2:#16265a;
   --card:rgba(255,255,255,.72);
   --line:rgba(255,255,255,.35);
   --text:#1c2340;
   --muted:#67708f;
   --pink:#ffc6de;
-  --pink-2:#ffd9e8;
   --yellow:#ffe7a8;
 }
 html,body{margin:0;padding:0}
@@ -61,18 +59,24 @@ body::before{
   from{opacity:.2}
   to{opacity:.38}
 }
+
 .hidden{display:none!important}
+
+.shell,.app,.lock{
+  position:relative;
+  z-index:2;
+}
+
 .lock-star{
   width:200px;
   height:auto;
   animation:floatStar 3s ease-in-out infinite;
 }
-
 @keyframes floatStar{
   0%,100%{transform:translateY(0)}
   50%{transform:translateY(-6px)}
 }
-  
+
 .shell{
   min-height:100vh;
   display:flex;
@@ -80,7 +84,6 @@ body::before{
   justify-content:center;
   padding:20px;
 }
-
 .lock{
   width:min(420px,92vw);
   background:var(--card);
@@ -92,7 +95,6 @@ body::before{
   text-align:center;
   box-shadow:0 14px 40px rgba(0,0,0,.18);
 }
-.lock .emoji{font-size:54px}
 .lock h2{margin:10px 0 8px;font-family:'Gaegu',sans-serif;font-size:34px}
 .lock p{margin:0 0 18px;color:var(--muted)}
 .lock input{
@@ -100,27 +102,20 @@ body::before{
   font:inherit;background:#fff;
 }
 .lock button{
-  margin-top:12px;padding:12px 20px;border:none;border-radius:999px;background:linear-gradient(135deg,var(--pink),var(--yellow));
+  margin-top:12px;padding:12px 20px;border:none;border-radius:999px;
+  background:linear-gradient(135deg,var(--pink),var(--yellow));
   font:700 18px 'Gaegu',sans-serif;color:#3d2f40;cursor:pointer;
 }
 .msg{margin-top:10px;color:#a14d66;min-height:20px}
 
-.app{
-  width:min(1120px,96vw);
-}
-.header{
-  text-align:center;
-  margin-bottom:18px;
-}
+.app{width:min(1120px,96vw)}
+.header{text-align:center;margin-bottom:18px}
 .header h1{
   margin:0;
   font-family:'Gaegu',sans-serif;
   font-size:42px;
 }
-.header p{
-  margin:8px 0 0;
-  color:#d4dcff;
-}
+.header p{margin:8px 0 0;color:#d4dcff}
 
 .top-cards{
   display:grid;
@@ -146,7 +141,6 @@ body::before{
   grid-template-columns:380px 1fr;
   gap:20px;
 }
-
 .panel-title{
   margin:0 0 10px;
   font-family:'Gaegu',sans-serif;
@@ -160,7 +154,8 @@ body::before{
   margin-bottom:8px;
 }
 .calendar-head button{
-  border:none;border-radius:10px;background:#f8eaf1;color:#53445a;padding:8px 10px;cursor:pointer;font:700 16px 'Gaegu',sans-serif;
+  border:none;border-radius:10px;background:#f8eaf1;color:#53445a;
+  padding:8px 10px;cursor:pointer;font:700 16px 'Gaegu',sans-serif;
 }
 .weekdays,.calendar{
   display:grid;
@@ -188,12 +183,6 @@ body::before{
 .day.saved{background:#fff4f8}
 .day.selected{outline:2px solid #ffbdd5}
 .day.today{box-shadow:inset 0 0 0 2px #ffe3a0}
-.day .bear-badge{
-  position:absolute; right:4px; bottom:4px;
-  width:22px; height:22px; border-radius:50%;
-  display:flex; align-items:center; justify-content:center;
-  background:#ffe3ee; font-size:13px;
-}
 .day .paw{
   position:absolute; left:5px; bottom:4px; font-size:12px;
 }
@@ -223,6 +212,10 @@ button.primary{
   font:700 18px 'Gaegu',sans-serif;
   cursor:pointer;
 }
+.secondary{
+  margin-left:8px;
+  background:linear-gradient(135deg,#d9e7ff,#ffe7f2);
+}
 .note{
   margin-top:10px;
   color:var(--muted);
@@ -232,13 +225,9 @@ button.primary{
   margin-top:14px;
   background:#fff;
   border-radius:16px;
-  padding:14px 16px 14px 46px;
+  padding:14px 16px;
   position:relative;
   color:var(--text);
-}
-.speech::before{
-  content:"🧸";
-  position:absolute; left:12px; top:-10px; font-size:24px;
 }
 .speech.pop{animation:pop .45s ease}
 @keyframes pop{
@@ -247,91 +236,54 @@ button.primary{
   100%{transform:scale(1)}
 }
 
-/* natural shooting star */
+/* shooting star */
 .shooting-star{
   position:fixed;
   width:120px;
   height:2px;
-  background:linear-gradient(90deg, rgba(255,255,255,.95), rgba(255,255,255,0));
-  transform:rotate(-35deg);
-  filter:drop-shadow(0 0 6px rgba(255,255,255,.8));
-  animation:shoot 1.8s ease-out forwards;
+  background:linear-gradient(to right, rgba(255,255,255,0), rgba(255,255,255,0.9));
+  transform:rotate(35deg);
+  animation:shooting 2s linear forwards;
   pointer-events:none;
-  z-index:5;
+  z-index:3;
 }
-
-.shooting-star::before{
+.shooting-star::after{
   content:"";
   position:absolute;
-  right:0;
-  top:-3px;
-  width:7px;
-  height:7px;
+  right:-3px;
+  top:-2px;
+  width:6px;
+  height:6px;
   border-radius:50%;
-  background:#fff;
-  box-shadow:0 0 10px #fff;
+  background:white;
+  box-shadow:0 0 6px white, 0 0 12px white;
+}
+@keyframes shooting{
+  0%{transform:translate(0,0) rotate(35deg);opacity:0}
+  10%{opacity:1}
+  100%{transform:translate(600px,350px) rotate(35deg);opacity:0}
 }
 
-@keyframes shoot{
-  0%{
-    opacity:0;
-    transform:translate(0,0) rotate(-35deg);
-  }
-  10%{opacity:1;}
-  100%{
-    opacity:0;
-    transform:translate(420px,260px) rotate(-35deg);
-  }
-}
-.shell,
-.app,
-.lock{
-  position:relative;
-  z-index:2;
-}
-  
-.secondary{
-  margin-left:8px;
-  background:linear-gradient(135deg,#d9e7ff,#ffe7f2);
-}
-
-@media (max-width:900px){
-  .secondary{
-    margin-left:0;
-    margin-top:8px;
-  }
-}
-
-  .star-layer{
+/* stars */
+.star-field{
   position:fixed;
   inset:0;
   pointer-events:none;
   z-index:1;
 }
-
-.star{
+.star-dot{
   position:absolute;
-  color:rgba(255,245,190,.9);
-  text-shadow:0 0 8px rgba(255,255,255,.45);
-  animation:starBlink 2.8s ease-in-out infinite;
-  font-size:14px;
+  background:white;
+  border-radius:50%;
+  opacity:.7;
+  animation:twinkleStar 3.5s ease-in-out infinite;
+}
+@keyframes twinkleStar{
+  0%,100%{opacity:.3; transform:scale(.8)}
+  50%{opacity:1; transform:scale(1.3)}
 }
 
-.s1{top:9%; left:12%; animation-delay:0s;}
-.s2{top:16%; left:68%; animation-delay:.8s;}
-.s3{top:24%; left:84%; animation-delay:1.2s;}
-.s4{top:38%; left:22%; animation-delay:.4s;}
-.s5{top:57%; left:76%; animation-delay:1.6s;}
-.s6{top:68%; left:14%; animation-delay:.9s;}
-.s7{top:79%; left:52%; animation-delay:1.9s;}
-.s8{top:87%; left:88%; animation-delay:.2s;}
-
-@keyframes starBlink{
-  0%,100%{opacity:.35; transform:scale(.9);}
-  50%{opacity:1; transform:scale(1.15);}
-}
-
-/* walking dot bear */
+/* walking bear */
 .walking-bear{
   position:fixed;
   bottom:16px;
@@ -339,19 +291,11 @@ button.primary{
   width:120px;
   height:120px;
   z-index:20;
-
   background-repeat:no-repeat;
   background-size:contain;
   background-position:center;
-
   animation:bearMove 38s linear infinite;
   pointer-events:none;
-}
-
-/* 256x64 svg sprite sheet, 4 frames */
-@keyframes bearWalk{
-  from{background-position:0 0}
-  to{background-position:-256px 0}
 }
 @keyframes bearMove{
   from{left:-80px}
@@ -361,13 +305,13 @@ button.primary{
 .foot{
   position:fixed;
   font-size:14px;
-  opacity:.9;
+  opacity:.95;
   pointer-events:none;
+  z-index:50;
   animation:fadeFoot 3.6s ease forwards;
-  z-index:15;
 }
 @keyframes fadeFoot{
-  0%{opacity:.9; transform:scale(1)}
+  0%{opacity:.95; transform:scale(1)}
   100%{opacity:0; transform:translateY(6px) scale(.7)}
 }
 
@@ -384,118 +328,61 @@ button.primary{
   z-index:25;
 }
 
+/* writing bear */
+.writing-wrap{
+  position:relative;
+}
+.writing-bear{
+  position:absolute;
+  right:18px;
+  bottom:18px;
+  width:160px;
+  pointer-events:none;
+  z-index:10;
+}
+.writing-bear img{
+  width:100%;
+  image-rendering:pixelated;
+}
+
+/* birthday bear */
+.birthday-bear{
+  position:fixed;
+  right:20px;
+  top:20px;
+  width:140px;
+  z-index:40;
+  pointer-events:none;
+  animation:floatBirthday 3s ease-in-out infinite;
+}
+@keyframes floatBirthday{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-6px)}
+}
+
 @media (max-width:900px){
-
-  .shell{
-    padding:12px;
-  }
-
-  .lock{
-    padding:30px 20px;
-  }
-
-  .lock h2{
-    font-size:28px;
-  }
-
-  .header h1{
-    font-size:34px;
-  }
-
-  .top-cards{
-    grid-template-columns:1fr;
-  }
-
-  .main{
-    grid-template-columns:1fr;
-  }
-
-  .card{
-    padding:14px;
-  }
-
-  textarea{
-    min-height:180px;
-  }
-
-  .calendar{
-    gap:6px;
-  }
-
-  .day{
-    min-height:60px;
-    font-size:13px;
-  }
+  .secondary{margin-left:0;margin-top:8px}
+  .shell{padding:12px}
+  .lock{padding:30px 20px}
+  .lock h2{font-size:28px}
+  .header h1{font-size:34px}
+  .top-cards{grid-template-columns:1fr}
+  .main{grid-template-columns:1fr}
+  .card{padding:14px}
+  textarea{min-height:180px}
+  .calendar{gap:6px}
+  .day{min-height:60px;font-size:13px}
+  .writing-bear{width:130px}
 }
-
-/* stable shooting star */
-.shooting-star{
-  position:fixed;
-  width:120px;
-  height:2px;
-  background:linear-gradient(to right, rgba(255,255,255,0), rgba(255,255,255,0.9));
-  transform:rotate(35deg);
-  animation:shooting 2s linear forwards;
-  pointer-events:none;
-  z-index:3;
-}
-
-.shooting-star::after{
-  content:"";
-  position:absolute;
-  right:-3px;
-  top:-2px;
-  width:6px;
-  height:6px;
-  border-radius:50%;
-  background:white;
-  box-shadow:0 0 6px white, 0 0 12px white;
-}
-
-@keyframes shooting{
-  0%{
-    transform:translate(0,0) rotate(35deg);
-    opacity:0;
-  }
-  10%{opacity:1;}
-  100%{
-    transform:translate(600px,350px) rotate(35deg);
-    opacity:0;
-  }
-}
-
-
-/* random star engine */
-.star-field{
-  position:fixed;
-  inset:0;
-  pointer-events:none;
-  z-index:1;
-}
-
-.star-dot{
-  position:absolute;
-  background:white;
-  border-radius:50%;
-  opacity:.7;
-  animation:twinkleStar 3.5s ease-in-out infinite;
-}
-
-@keyframes twinkleStar{
-  0%,100%{opacity:.3; transform:scale(.8)}
-  50%{opacity:1; transform:scale(1.3)}
-}
-
 </style>
 </head>
 <body>
-<div class='star-field' id='starField'></div>
-
+<div class="star-field" id="starField"></div>
 
 <div class="shell">
   <div class="lock" id="lockScreen">
     <div class="emoji">
-      <img src="star.png" class="lock-star">
+      <img src="star.png" class="lock-star" alt="">
     </div>
     <h2>비밀번호를 입력하세요</h2>
     <p>하준이의 소중한 하루를 담아두는 비밀 일기장이에요</p>
@@ -555,7 +442,10 @@ button.primary{
             <option>🌈 특별한 하루</option>
           </select>
         </div>
-        <textarea id="text" placeholder="오늘 하준이는 뭐하고 놀았어?"></textarea>
+        <div class="writing-wrap">
+          <textarea id="text" placeholder="오늘 하준이는 뭐하고 놀았어?"></textarea>
+          <div class="writing-bear"><img id="writeBear" src="bear3.png" alt=""></div>
+        </div>
         <button class="primary" onclick="save()">일기 저장</button>
         <button class="primary secondary" type="button" onclick="backupDiary()">전체 일기 백업</button>
         <button class="primary secondary" type="button" onclick="document.getElementById('restoreFile').click()">백업 복원</button>
@@ -571,120 +461,138 @@ button.primary{
 
 <div class="walking-bear" id="bear"></div>
 <div class="bubble hidden" id="bubble"></div>
+<img src="bear5.png" id="birthdayBear" class="birthday-bear hidden" alt="">
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>  
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const PASSWORD="0427";
-const PREFIX="hajun-diary-";
-const BIRTH="2023-04-12";
-
+const PASSWORD = "0427";
+const BIRTH = "2023-04-12";
 const SUPABASE_URL = "https://mytuhgjimfjmmqxmewfd.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im15dHVoZ2ppbWZqbW1xeG1ld2ZkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMyMzc4NDAsImV4cCI6MjA4ODgxMzg0MH0.ooPIunXoOHbMGob_ihMSYpdO1Fl2yij-ErVelgzl-9A";
-
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-const lockScreen=document.getElementById("lockScreen");
-const app=document.getElementById("app");
-const msg=document.getElementById("msg");
-const ageEl=document.getElementById("age");
-const countEl=document.getElementById("count");
-const bearMsg=document.getElementById("bearMsg");
-const calendarEl=document.getElementById("calendar");
-const dateEl=document.getElementById("date");
-const weatherEl=document.getElementById("weather");
-const textEl=document.getElementById("text");
-const monthLabel=document.getElementById("monthLabel");
-const speech=document.getElementById("speech");
-const speechText=document.getElementById("speechText");
-const bear=document.getElementById("bear");
-const bubble=document.getElementById("bubble");
+const lockScreen = document.getElementById("lockScreen");
+const app = document.getElementById("app");
+const msg = document.getElementById("msg");
+const ageEl = document.getElementById("age");
+const countEl = document.getElementById("count");
+const bearMsg = document.getElementById("bearMsg");
+const calendarEl = document.getElementById("calendar");
+const dateEl = document.getElementById("date");
+const weatherEl = document.getElementById("weather");
+const textEl = document.getElementById("text");
+const monthLabel = document.getElementById("monthLabel");
+const speech = document.getElementById("speech");
+const speechText = document.getElementById("speechText");
+const bear = document.getElementById("bear");
+const bubble = document.getElementById("bubble");
+const writeBear = document.getElementById("writeBear");
+const birthdayBear = document.getElementById("birthdayBear");
 
-let viewYear=(new Date()).getFullYear();
-let viewMonth=(new Date()).getMonth();
+let viewYear = (new Date()).getFullYear();
+let viewMonth = (new Date()).getMonth();
+let footprintTimer = null;
 
-const bearLines=[
+const bearLines = [
   "오늘 하준이는 뭐했어?",
   "오늘 웃은 순간이 있었어?",
   "곰돌이가 기다리고 있어!",
   "귀여운 말 한마디 있었어?"
 ];
-
-const talkLines=[
+const talkLines = [
   "하준아 뭐했어?",
   "오늘도 재미있었어?",
   "곰돌이가 왔어!",
   "오늘 웃은 순간 적어볼까?"
 ];
 
-const BEAR_FRAME_MS = 350;
-const FOOTPRINT_MS = 520;
-const TALK_INTERVAL_MS = 9000;
-const TALK_DURATION_MS = 1800;
+const walkingFrames = ["bear1.png","bear2.png"];
+let walkingFrameIndex = 0;
 
-// walking bear using 2 images
-const bearFrames = ["bear1.png","bear2.png"];
-let bearFrameIndex = 0;
+const writeFrames = ["bear3.png","bear4.png"];
+const bearStar = "bear8.png";
+const bearSleep = "bear6.png";
+const bearHeart = "bear7.png";
+let writing = false;
+let writingFrameIndex = 0;
+let writingTimer = null;
+let idle2Timer = null;
+let idle10Timer = null;
+let heartTimer = null;
 
 function animateBear(){
-  bear.style.backgroundImage = `url(${bearFrames[bearFrameIndex]})`;
-  bearFrameIndex = (bearFrameIndex + 1) % bearFrames.length;
-  bear.style.backgroundSize = "contain";
-  bear.style.backgroundRepeat = "no-repeat";
+  bear.style.backgroundImage = `url(${walkingFrames[walkingFrameIndex]})`;
+  walkingFrameIndex = (walkingFrameIndex + 1) % walkingFrames.length;
 }
 
-setInterval(animateBear, BEAR_FRAME_MS);
-  
+setInterval(animateBear, 350);
+
 async function unlock(){
-  if(document.getElementById("pw").value===PASSWORD){
+  if(document.getElementById("pw").value === PASSWORD){
     lockScreen.classList.add("hidden");
     app.classList.remove("hidden");
     await init();
   }else{
-    msg.textContent="비밀번호가 달라요";
+    msg.textContent = "비밀번호가 달라요";
   }
 }
 
 async function init(){
   const today = new Date();
-  dateEl.value = today.toISOString().slice(0,10);
+  dateEl.value = toLocalDateString(today);
   updateAge();
   await buildCalendar();
   refreshBearMsg();
-  const hour=today.getHours();
-  let interval=2600;
-  if(hour>=21||hour<=5) interval=1400;
+  checkBirthdayBear();
+  generateStars();
+  resetIdleTimers();
+
+  let interval = 2600;
+  const hour = today.getHours();
+  if(hour >= 21 || hour <= 5) interval = 1400;
+
   setInterval(createShootingStar, interval);
-  setInterval(dropFootprint, FOOTPRINT_MS);
-  setInterval(showBearTalk, TALK_INTERVAL_MS);
+  setInterval(showBearTalk, 9000);
   setInterval(refreshBearMsg, 9000);
   setInterval(syncBubblePosition, 80);
+
+  if(footprintTimer) clearInterval(footprintTimer);
+  footprintTimer = setInterval(dropFootprint, 600);
+
   animateBear();
 }
 
-function updateAge(){
-  const b=new Date(BIRTH);
-  const t=new Date();
-  let y=t.getFullYear()-b.getFullYear();
-  let m=t.getMonth()-b.getMonth();
-  let d=t.getDate()-b.getDate();
-  if(d<0){m--;d+=30}
-  if(m<0){y--;m+=12}
-  ageEl.textContent=`${y}y ${m}m ${d}d`;
+function toLocalDateString(d){
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
 }
 
-function key(date){ return PREFIX+date; }
+function updateAge(){
+  const b = new Date(BIRTH);
+  const t = new Date();
+  let y = t.getFullYear() - b.getFullYear();
+  let m = t.getMonth() - b.getMonth();
+  let d = t.getDate() - b.getDate();
+  if(d < 0){ m--; d += 30; }
+  if(m < 0){ y--; m += 12; }
+  ageEl.textContent = `${y}y ${m}m ${d}d`;
+}
+
+function refreshBearMsg(){
+  bearMsg.textContent = bearLines[Math.floor(Math.random() * bearLines.length)];
+}
 
 async function save(){
   const date = dateEl.value;
   if(!date) return;
 
-  const { error } = await sb
-    .from("diary")
-    .upsert({
-      date: date,
-      text: textEl.value,
-      weather: weatherEl.value
-    }, { onConflict: "date" });
+  const { error } = await sb.from("diary").upsert({
+    date: date,
+    text: textEl.value,
+    weather: weatherEl.value
+  }, { onConflict: "date" });
 
   if(error){
     console.error(error);
@@ -723,11 +631,11 @@ async function loadEntry(date){
 
 async function buildCalendar(){
   calendarEl.innerHTML = "";
-  monthLabel.textContent = `${viewYear}년 ${viewMonth+1}월`;
+  monthLabel.textContent = `${viewYear}년 ${viewMonth + 1}월`;
 
   const firstDay = new Date(viewYear, viewMonth, 1).getDay();
   const lastDate = new Date(viewYear, viewMonth + 1, 0).getDate();
-  const todayStr = (new Date()).toISOString().slice(0,10);
+  const todayStr = toLocalDateString(new Date());
 
   const monthStart = `${viewYear}-${String(viewMonth+1).padStart(2,"0")}-01`;
   const monthEnd = `${viewYear}-${String(viewMonth+1).padStart(2,"0")}-${String(lastDate).padStart(2,"0")}`;
@@ -738,13 +646,11 @@ async function buildCalendar(){
     .gte("date", monthStart)
     .lte("date", monthEnd);
 
-  if(error){
-    console.error(error);
-  }
+  if(error) console.error(error);
 
   const savedDates = new Set((data || []).map(item => item.date));
 
-  for(let i=0; i<firstDay; i++){
+  for(let i = 0; i < firstDay; i++){
     const empty = document.createElement("div");
     empty.className = "day empty";
     calendarEl.appendChild(empty);
@@ -752,7 +658,7 @@ async function buildCalendar(){
 
   let count = 0;
 
-  for(let i=1; i<=lastDate; i++){
+  for(let i = 1; i <= lastDate; i++){
     const d = `${viewYear}-${String(viewMonth+1).padStart(2,"0")}-${String(i).padStart(2,"0")}`;
     const cell = document.createElement("div");
     cell.className = "day";
@@ -760,12 +666,6 @@ async function buildCalendar(){
     if(savedDates.has(d)){
       cell.classList.add("saved");
       count++;
-
-      const bearBadge = document.createElement("div");
-      bearBadge.className = "bear-badge";
-      bearBadge.textContent = "🧸";
-      cell.appendChild(bearBadge);
-
       const paw = document.createElement("div");
       paw.className = "paw";
       paw.textContent = "🐾";
@@ -783,7 +683,7 @@ async function buildCalendar(){
     cell.onclick = async () => {
       if(savedDates.has(d)){
         await loadEntry(d);
-      } else {
+      }else{
         dateEl.value = d;
         textEl.value = "";
       }
@@ -803,72 +703,43 @@ async function changeMonth(diff){
   await buildCalendar();
 }
 
-function syncBubblePosition(){
-
-  if(bubble.classList.contains("hidden")) return;
-
-  const r = bear.getBoundingClientRect();
-
-  bubble.style.left = (r.left + 20) + "px";
-  bubble.style.top = (r.top - 50) + "px";
-
-}
-
-function hideBubble(){
-  bubble.classList.add("hidden");
-}
-
-
-function refreshBearMsg(){
-  bearMsg.textContent = bearLines[Math.floor(Math.random()*bearLines.length)];
-}
-
-const SHOOT_DURATION = 1800;
-let bubbleHideTimer = null;
-
 function createShootingStar(){
   const star = document.createElement("div");
   star.className = "shooting-star";
   star.style.left = "-120px";
-  star.style.top = (Math.random()*window.innerHeight*0.6)+"px";
+  star.style.top = (Math.random() * window.innerHeight * 0.6) + "px";
   document.body.appendChild(star);
-  setTimeout(()=>{ star.remove(); },2000);
+  setTimeout(()=> star.remove(), 2000);
 }
-  
+
 function dropFootprint(){
-  const r=bear.getBoundingClientRect();
-  const f=document.createElement("div");
-  f.className="foot";
-  f.textContent="🐾";
-  f.style.left=(r.left+8)+"px";
-  f.style.top=(r.bottom-2)+"px";
-  document.body.appendChild(f);
-  setTimeout(()=>f.remove(),3600);
+  const rect = bear.getBoundingClientRect();
+  if(rect.left < -20 || rect.left > window.innerWidth - 10) return;
+
+  const foot = document.createElement("div");
+  foot.className = "foot";
+  foot.textContent = "🐾";
+  foot.style.left = (rect.left + 28) + "px";
+  foot.style.top = (rect.bottom - 8) + "px";
+  document.body.appendChild(foot);
+  setTimeout(()=> foot.remove(), 3600);
+}
+
+function syncBubblePosition(){
+  if(bubble.classList.contains("hidden")) return;
+  const r = bear.getBoundingClientRect();
+  bubble.style.left = (r.left + 20) + "px";
+  bubble.style.top = (r.top - 50) + "px";
 }
 
 function showBearTalk(){
-
   const r = bear.getBoundingClientRect();
-
-  bubble.textContent =
-    talkLines[Math.floor(Math.random() * talkLines.length)];
-
+  bubble.textContent = talkLines[Math.floor(Math.random() * talkLines.length)];
   bubble.classList.remove("hidden");
-
-  // 곰 위치 기준 말풍선 위치
-  bubble.style.left =
-    Math.max(12, Math.min(window.innerWidth - 220, r.left + 20)) + "px";
-
-  bubble.style.top =
-    Math.max(12, r.top - 50) + "px";
-
+  bubble.style.left = Math.max(12, Math.min(window.innerWidth - 220, r.left + 20)) + "px";
+  bubble.style.top = Math.max(12, r.top - 50) + "px";
   bubble.style.bottom = "auto";
-
-  // 1.6초 후 말풍선 사라짐
-  setTimeout(()=>{
-    bubble.classList.add("hidden");
-  },1600);
-
+  setTimeout(()=> bubble.classList.add("hidden"), 1600);
 }
 
 async function backupDiary(){
@@ -883,14 +754,13 @@ async function backupDiary(){
     return;
   }
 
-  const blob = new Blob(
-    [JSON.stringify(data || [], null, 2)],
-    { type: "application/json;charset=utf-8" }
-  );
+  const blob = new Blob([JSON.stringify(data || [], null, 2)], {
+    type: "application/json;charset=utf-8"
+  });
 
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
-  const today = new Date().toISOString().slice(0,10);
+  const today = toLocalDateString(new Date());
 
   a.href = url;
   a.download = `hajun-diary-backup-${today}.json`;
@@ -955,30 +825,90 @@ async function restoreDiary(event){
   event.target.value = "";
 }
 
-/* generate random stars */
 function generateStars(){
   const field = document.getElementById("starField");
-  const count = 120;
-
-  for(let i=0;i<count;i++){
+  field.innerHTML = "";
+  for(let i = 0; i < 120; i++){
     const s = document.createElement("div");
     s.className = "star-dot";
-
-    const size = Math.random()*3 + 1;
+    const size = Math.random() * 3 + 1;
     s.style.width = size + "px";
     s.style.height = size + "px";
-
-    s.style.left = Math.random()*100 + "vw";
-    s.style.top = Math.random()*100 + "vh";
-
-    s.style.animationDelay = (Math.random()*4)+"s";
-
+    s.style.left = Math.random() * 100 + "vw";
+    s.style.top = Math.random() * 100 + "vh";
+    s.style.animationDelay = (Math.random() * 4) + "s";
     field.appendChild(s);
   }
 }
 
-window.addEventListener("load", generateStars);
+function checkBirthdayBear(){
+  const today = new Date();
+  const m = today.getMonth() + 1;
+  const d = today.getDate();
+  const birthdays = [
+    {m:4, d:12},
+    {m:4, d:27},
+    {m:10, d:4}
+  ];
+  const show = birthdays.some(b => b.m === m && b.d === d);
+  birthdayBear.classList.toggle("hidden", !show);
+}
 
+function setWriteBear(src){
+  writeBear.src = src;
+}
+
+function startWriting(){
+  if(writing) return;
+  writing = true;
+  clearInterval(writingTimer);
+  writingTimer = setInterval(()=>{
+    writingFrameIndex = (writingFrameIndex + 1) % writeFrames.length;
+    setWriteBear(writeFrames[writingFrameIndex]);
+  }, 280);
+}
+
+function stopWriting(){
+  writing = false;
+  clearInterval(writingTimer);
+}
+
+function resetIdleTimers(){
+  clearTimeout(idle2Timer);
+  clearTimeout(idle10Timer);
+
+  idle2Timer = setTimeout(()=>{
+    stopWriting();
+    setWriteBear(bearStar);
+  }, 2000);
+
+  idle10Timer = setTimeout(()=>{
+    stopWriting();
+    setWriteBear(bearSleep);
+  }, 10000);
+}
+
+textEl.addEventListener("input", ()=>{
+  startWriting();
+  resetIdleTimers();
+});
+
+textEl.addEventListener("keydown", (e)=>{
+  if(e.key === "Enter"){
+    stopWriting();
+    setWriteBear(bearHeart);
+    clearTimeout(heartTimer);
+    heartTimer = setTimeout(()=>{
+      startWriting();
+      resetIdleTimers();
+    }, 1200);
+  }
+});
+
+window.addEventListener("load", ()=>{
+  generateStars();
+  checkBirthdayBear();
+});
 </script>
 </body>
 </html>
