@@ -62,15 +62,17 @@ body::before{
   to{opacity:.38}
 }
 .hidden{display:none!important}
-.lock-bear{
-  width:140px;
-  height:140px;
-  object-fit:contain;
-
-  image-rendering:pixelated;
-  image-rendering:-moz-crisp-edges;
-  image-rendering:crisp-edges;
+.lock-star{
+  width:200px;
+  height:auto;
+  animation:floatStar 3s ease-in-out infinite;
 }
+
+@keyframes floatStar{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-6px)}
+}
+  
 .shell{
   min-height:100vh;
   display:flex;
@@ -493,7 +495,7 @@ button.primary{
 <div class="shell">
   <div class="lock" id="lockScreen">
     <div class="emoji">
-      <img src="bear.png" class="lock-bear">
+      <img src="star.png" class="lock-star">
     </div>
     <h2>비밀번호를 입력하세요</h2>
     <p>하준이의 소중한 하루를 담아두는 비밀 일기장이에요</p>
