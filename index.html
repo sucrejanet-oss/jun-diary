@@ -1320,23 +1320,7 @@ button.primary{
 <div class="bubble hidden" id="bubble"></div>
 <img src="bear5.png" id="birthdayBear" class="birthday-bear hidden" alt="">
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
-// create fireflies
-function createFireflies(){
-  const layer=document.querySelector(".fireflies");
-  if(!layer) return;
-  for(let i=0;i<18;i++){
-    const f=document.createElement("div");
-    f.className="firefly";
-    f.style.left=Math.random()*100+"%";
-    f.style.top=(60+Math.random()*40)+"%";
-    f.style.animationDelay=(Math.random()*6)+"s";
-    layer.appendChild(f);
-  }
-}
-window.addEventListener("load",createFireflies);
-
-</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 const PASSWORD = "0427";
 const BIRTH = "2023-04-12";
@@ -1515,7 +1499,7 @@ function showBearTalk(){
 function generateStars(){
   const field = document.getElementById("starField");
   field.innerHTML = "";
-  for(let i=0;i<120;i++){
+  for(let i=0;i<72;i++){
     const s = document.createElement("div");
     s.className = "star-dot";
     const size = Math.random()*3 + 1;
@@ -1618,8 +1602,7 @@ async function unlock(){
     lockScreen.classList.add("hidden");
     await initApp();
     showOnly(menuScreen);
-  lpMenuMode();
-  lpMenuMode();
+    lpMenuMode();
   }else{
     msg.textContent = "비밀번호가 달라요";
   }
@@ -1638,8 +1621,8 @@ async function initApp(){
   startFootprints();
 
   const hour = today.getHours();
-  let interval = 2600;
-  if(hour >= 21 || hour <= 5) interval = 1400;
+  let interval = 4200;
+  if(hour >= 21 || hour <= 5) interval = 2600;
 
   window.setInterval(createShootingStar, interval);
   window.setInterval(showBearTalk, 9000);
@@ -1661,7 +1644,6 @@ async function openViewer(){
 
 function backToMenu(){
   showOnly(menuScreen);
-  lpMenuMode();
   lpMenuMode();
 }
 
@@ -2026,6 +2008,7 @@ window.addEventListener("load",createFireflies);
 
 <script>
 
+/* ===== LP PLAYER OPTIMIZED ===== */
 const lpPlayer=document.getElementById("lpPlayer");
 const lpFrame=document.getElementById("lpFrame");
 const lpAudio=document.getElementById("lpAudio");
@@ -2039,19 +2022,40 @@ const frames=[
 
 const playlist=["musicboxA.mp3","musicboxB.mp3"];
 
-let frameIndex = 0;
+let frameIndex=0;
 let musicIndex=0;
 let playing=false;
-    
-let anim=null;
+let lastFrameTime=0;
 let noteTimer=null;
+let resizeTimer=null;
 
-/* floating notes */
+/* preload frames so Netlify/browser decode lag is reduced */
+frames.forEach(src=>{
+  const img=new Image();
+  img.decoding="async";
+  img.src=src;
+});
+
+playlist.forEach(src=>{
+  const audio=document.createElement("audio");
+  audio.preload="auto";
+  audio.src=src;
+});
+
+function lpAnimate(time){
+  if(!playing) return;
+
+  if(time-lastFrameTime>220){
+    frameIndex=(frameIndex+1)%frames.length;
+    lpFrame.src=frames[frameIndex];
+    lastFrameTime=time;
+  }
+
+  requestAnimationFrame(lpAnimate);
+}
 
 let noteActive=false;
-
 function createNote(){
-
   if(noteActive) return;
   noteActive=true;
 
@@ -2060,16 +2064,13 @@ function createNote(){
   note.textContent=["🎵","🎶","♪"][Math.floor(Math.random()*3)];
   note.style.left=(60+Math.random()*40)+"px";
   note.style.top="70px";
-
   lpPlayer.appendChild(note);
 
   setTimeout(()=>{
     note.remove();
     noteActive=false;
-  },2500);
-
+  },2200);
 }
-
 
 function createSpark(){
   const star=document.createElement("div");
@@ -2078,38 +2079,33 @@ function createSpark(){
   star.style.left=Math.random()*120+"px";
   star.style.top=Math.random()*60+"px";
   lpPlayer.appendChild(star);
-  setTimeout(()=>star.remove(),2000);
+  setTimeout(()=>star.remove(),1800);
+}
+
+function stopLPVisuals(){
+  clearInterval(noteTimer);
+  noteTimer=null;
 }
 
 function toggleLP(){
-
   if(!playing){
-
     lpAudio.src=playlist[musicIndex];
     lpAudio.play().catch(()=>{});
 
-    anim=setInterval(()=>{ if(Math.random()<0.6) createNote();
-      frameIndex=(frameIndex+1)%frames.length;
-      lpFrame.src=frames[frameIndex];
-    },180);
-
-    noteTimer=setInterval(()=>{ if(Math.random()<0.6) createNote();
-      createNote();
-      if(Math.random()<0.6)createSpark();
-    },700);
-
     playing=true;
+    lastFrameTime=0;
+    requestAnimationFrame(lpAnimate);
 
+    stopLPVisuals();
+    noteTimer=setInterval(()=>{
+      if(Math.random()<0.5) createNote();
+      if(Math.random()<0.35) createSpark();
+    },900);
   }else{
-
     lpAudio.pause();
-    clearInterval(anim);
-    clearInterval(noteTimer);
+    stopLPVisuals();
     playing=false;
-    
-
   }
-
 }
 
 lpPlayer.addEventListener("click",toggleLP);
@@ -2120,45 +2116,34 @@ lpAudio.addEventListener("ended",()=>{
   lpAudio.play().catch(()=>{});
 });
 
-/* ===== positioning logic ===== */
-
-
 function positionLPMenu(){
+  const menu=document.querySelector(".menu-right");
+  if(!menu || menuScreen.classList.contains("hidden")) return;
 
-  const menu = document.querySelector(".menu-right");
-  if(!menu) return;
-
-  const rect = menu.getBoundingClientRect();
-
-  lpPlayer.style.left = (rect.right - 200) + "px";
-  lpPlayer.style.top  = (rect.top - 25) + "px";
-
+  const rect=menu.getBoundingClientRect();
+  lpPlayer.style.left=(rect.right-200)+"px";
+  lpPlayer.style.top=(rect.top-25)+"px";
 }
 
-
 function lpDiaryMode(){
-
   lpPlayer.classList.add("lp-diary");
   lpPlayer.style.left="";
   lpPlayer.style.top="";
-
 }
-
 
 function lpMenuMode(){
-
   lpPlayer.classList.remove("lp-diary");
-
-  requestAnimationFrame(()=>{
-    requestAnimationFrame(()=>{
-      positionLPMenu();
-    });
-  });
-
+  requestAnimationFrame(()=>requestAnimationFrame(positionLPMenu));
 }
 
+window.addEventListener("resize",()=>{
+  clearTimeout(resizeTimer);
+  resizeTimer=setTimeout(positionLPMenu,200);
+});
 
-window.addEventListener("resize", positionLPMenu);
+window.addEventListener("load",()=>{
+  if(!menuScreen.classList.contains("hidden")) positionLPMenu();
+});
 
 </script>
 <script>
