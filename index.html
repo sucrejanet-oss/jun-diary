@@ -1082,12 +1082,13 @@ button.primary{
 /* glow aura */
 .lp-glow{
   position:absolute;
-  inset:-30px;
+  inset:-20px;
   border-radius:50%;
-  background:radial-gradient(circle, rgba(255,255,220,0.9), transparent 70%);
+  background:radial-gradient(circle, rgba(255,255,220,.12), transparent 70%);
   animation:lpAura 4s ease-in-out infinite;
+  pointer-events:none;
 }
-  
+
 @keyframes lpAura{
   0%,100%{opacity:.55; transform:scale(.94)}
   50%{opacity:.95; transform:scale(1.08)}
@@ -2129,8 +2130,8 @@ function positionLPMenu(){
 
   const rect = menu.getBoundingClientRect();
 
-  lpPlayer.style.left = (rect.right - 200) + "px";
-  lpPlayer.style.top  = (rect.top - 25) + "px";
+  lpPlayer.style.left = (rect.right - 190) + "px";
+  lpPlayer.style.top  = (rect.top + 22) + "px";
 
 }
 
