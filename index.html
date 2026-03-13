@@ -2161,6 +2161,45 @@ function lpMenuMode(){
 window.addEventListener("resize", positionLPMenu);
 
 </script>
+<script>
 
+/* ===== ENTER KEY LOGIN ===== */
+document.addEventListener("DOMContentLoaded", function(){
+
+  const pwInput = document.getElementById("pw");
+
+  if(pwInput){
+    pwInput.addEventListener("keydown", function(e){
+      if(e.key === "Enter"){
+        unlock();
+      }
+    });
+  }
+
+});
+
+
+/* ===== VIEWER ARROW NAVIGATION ===== */
+document.addEventListener("keydown", function(e){
+
+  const viewer = document.getElementById("viewerScreen");
+
+  if(!viewer) return;
+
+  if(!viewer.classList.contains("hidden")){
+
+    if(e.key === "ArrowLeft"){
+      olderEntry();
+    }
+
+    if(e.key === "ArrowRight"){
+      newerEntry();
+    }
+
+  }
+
+});
+
+</script>
 </body>
 </html>
