@@ -1082,15 +1082,15 @@ button.primary{
 /* glow aura */
 .lp-glow{
   position:absolute;
-  inset:-20px;
+  inset:-28px;
   border-radius:50%;
   background:radial-gradient(circle,
-    rgba(255,230,160,1) 0%,
-    rgba(255,230,160,0.6) 35%,
-    rgba(255,230,160,0.25) 60%,
-    transparent 75%);
+    rgba(255,240,180,0.65) 0%,
+    rgba(255,240,180,0.25) 40%,
+    rgba(255,240,180,0.1) 60%,
+    transparent 80%);
   filter:blur(12px);
-  z-index:-1;
+  pointer-events:none;
 }
 
 @keyframes lpAura{
