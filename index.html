@@ -1151,6 +1151,39 @@ button.primary{
 }
 
 </style>
+
+<style>
+/* ===== MOBILE TINY LP WIDGET ===== */
+@media (max-width:900px){
+
+  #lpPlayer{
+    width:40px !important;
+    height:40px !important;
+    right:10px !important;
+    bottom:10px !important;
+    top:auto !important;
+    left:auto !important;
+    padding:6px;
+  }
+
+  #lpPlayer img{
+    width:100%;
+    height:100%;
+  }
+
+  .lp-glow{ inset:-4px !important; }
+
+  .lp-moon{
+    font-size:10px !important;
+    top:-4px !important;
+    right:-4px !important;
+  }
+
+  .lp-note{ font-size:8px !important; }
+  .lp-star{ font-size:8px !important; }
+}
+</style>
+
 </head>
 <body>
 <div id="starField"></div>
@@ -1320,7 +1353,23 @@ button.primary{
 <div class="bubble hidden" id="bubble"></div>
 <img src="bear5.png" id="birthdayBear" class="birthday-bear hidden" alt="">
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2">
+// create fireflies
+function createFireflies(){
+  const layer=document.querySelector(".fireflies");
+  if(!layer) return;
+  for(let i=0;i<18;i++){
+    const f=document.createElement("div");
+    f.className="firefly";
+    f.style.left=Math.random()*100+"%";
+    f.style.top=(60+Math.random()*40)+"%";
+    f.style.animationDelay=(Math.random()*6)+"s";
+    layer.appendChild(f);
+  }
+}
+window.addEventListener("load",createFireflies);
+
+</script>
 <script>
 const PASSWORD = "0427";
 const BIRTH = "2023-04-12";
@@ -1499,7 +1548,7 @@ function showBearTalk(){
 function generateStars(){
   const field = document.getElementById("starField");
   field.innerHTML = "";
-  for(let i=0;i<72;i++){
+  for(let i=0;i<120;i++){
     const s = document.createElement("div");
     s.className = "star-dot";
     const size = Math.random()*3 + 1;
@@ -1602,7 +1651,8 @@ async function unlock(){
     lockScreen.classList.add("hidden");
     await initApp();
     showOnly(menuScreen);
-    lpMenuMode();
+  lpMenuMode();
+  lpMenuMode();
   }else{
     msg.textContent = "비밀번호가 달라요";
   }
@@ -1621,8 +1671,8 @@ async function initApp(){
   startFootprints();
 
   const hour = today.getHours();
-  let interval = 4200;
-  if(hour >= 21 || hour <= 5) interval = 2600;
+  let interval = 2600;
+  if(hour >= 21 || hour <= 5) interval = 1400;
 
   window.setInterval(createShootingStar, interval);
   window.setInterval(showBearTalk, 9000);
@@ -1644,6 +1694,7 @@ async function openViewer(){
 
 function backToMenu(){
   showOnly(menuScreen);
+  lpMenuMode();
   lpMenuMode();
 }
 
@@ -2008,7 +2059,6 @@ window.addEventListener("load",createFireflies);
 
 <script>
 
-/* ===== LP PLAYER OPTIMIZED ===== */
 const lpPlayer=document.getElementById("lpPlayer");
 const lpFrame=document.getElementById("lpFrame");
 const lpAudio=document.getElementById("lpAudio");
@@ -2022,40 +2072,19 @@ const frames=[
 
 const playlist=["musicboxA.mp3","musicboxB.mp3"];
 
-let frameIndex=0;
+let frameIndex = 0;
 let musicIndex=0;
 let playing=false;
-let lastFrameTime=0;
+    
+let anim=null;
 let noteTimer=null;
-let resizeTimer=null;
 
-/* preload frames so Netlify/browser decode lag is reduced */
-frames.forEach(src=>{
-  const img=new Image();
-  img.decoding="async";
-  img.src=src;
-});
-
-playlist.forEach(src=>{
-  const audio=document.createElement("audio");
-  audio.preload="auto";
-  audio.src=src;
-});
-
-function lpAnimate(time){
-  if(!playing) return;
-
-  if(time-lastFrameTime>220){
-    frameIndex=(frameIndex+1)%frames.length;
-    lpFrame.src=frames[frameIndex];
-    lastFrameTime=time;
-  }
-
-  requestAnimationFrame(lpAnimate);
-}
+/* floating notes */
 
 let noteActive=false;
+
 function createNote(){
+
   if(noteActive) return;
   noteActive=true;
 
@@ -2064,13 +2093,16 @@ function createNote(){
   note.textContent=["🎵","🎶","♪"][Math.floor(Math.random()*3)];
   note.style.left=(60+Math.random()*40)+"px";
   note.style.top="70px";
+
   lpPlayer.appendChild(note);
 
   setTimeout(()=>{
     note.remove();
     noteActive=false;
-  },2200);
+  },2500);
+
 }
+
 
 function createSpark(){
   const star=document.createElement("div");
@@ -2079,33 +2111,38 @@ function createSpark(){
   star.style.left=Math.random()*120+"px";
   star.style.top=Math.random()*60+"px";
   lpPlayer.appendChild(star);
-  setTimeout(()=>star.remove(),1800);
-}
-
-function stopLPVisuals(){
-  clearInterval(noteTimer);
-  noteTimer=null;
+  setTimeout(()=>star.remove(),2000);
 }
 
 function toggleLP(){
+
   if(!playing){
+
     lpAudio.src=playlist[musicIndex];
     lpAudio.play().catch(()=>{});
 
-    playing=true;
-    lastFrameTime=0;
-    requestAnimationFrame(lpAnimate);
+    anim=setInterval(()=>{ if(Math.random()<0.6) createNote();
+      frameIndex=(frameIndex+1)%frames.length;
+      lpFrame.src=frames[frameIndex];
+    },180);
 
-    stopLPVisuals();
-    noteTimer=setInterval(()=>{
-      if(Math.random()<0.5) createNote();
-      if(Math.random()<0.35) createSpark();
-    },900);
+    noteTimer=setInterval(()=>{ if(Math.random()<0.6) createNote();
+      createNote();
+      if(Math.random()<0.6)createSpark();
+    },700);
+
+    playing=true;
+
   }else{
+
     lpAudio.pause();
-    stopLPVisuals();
+    clearInterval(anim);
+    clearInterval(noteTimer);
     playing=false;
+    
+
   }
+
 }
 
 lpPlayer.addEventListener("click",toggleLP);
@@ -2116,34 +2153,45 @@ lpAudio.addEventListener("ended",()=>{
   lpAudio.play().catch(()=>{});
 });
 
-function positionLPMenu(){
-  const menu=document.querySelector(".menu-right");
-  if(!menu || menuScreen.classList.contains("hidden")) return;
+/* ===== positioning logic ===== */
 
-  const rect=menu.getBoundingClientRect();
-  lpPlayer.style.left=(rect.right-200)+"px";
-  lpPlayer.style.top=(rect.top-25)+"px";
+
+function positionLPMenu(){
+
+  const menu = document.querySelector(".menu-right");
+  if(!menu) return;
+
+  const rect = menu.getBoundingClientRect();
+
+  lpPlayer.style.left = (rect.right - 200) + "px";
+  lpPlayer.style.top  = (rect.top - 25) + "px";
+
 }
 
+
 function lpDiaryMode(){
+
   lpPlayer.classList.add("lp-diary");
   lpPlayer.style.left="";
   lpPlayer.style.top="";
+
 }
+
 
 function lpMenuMode(){
+
   lpPlayer.classList.remove("lp-diary");
-  requestAnimationFrame(()=>requestAnimationFrame(positionLPMenu));
+
+  requestAnimationFrame(()=>{
+    requestAnimationFrame(()=>{
+      positionLPMenu();
+    });
+  });
+
 }
 
-window.addEventListener("resize",()=>{
-  clearTimeout(resizeTimer);
-  resizeTimer=setTimeout(positionLPMenu,200);
-});
 
-window.addEventListener("load",()=>{
-  if(!menuScreen.classList.contains("hidden")) positionLPMenu();
-});
+window.addEventListener("resize", positionLPMenu);
 
 </script>
 <script>
@@ -2186,5 +2234,21 @@ document.addEventListener("keydown", function(e){
 });
 
 </script>
+
+<script>
+function updateLPVisibility(){
+  const lp=document.getElementById("lpPlayer");
+  const editor=document.getElementById("editorScreen");
+  if(!lp || !editor) return;
+
+  if(window.innerWidth<900 && !editor.classList.contains("hidden")){
+    lp.style.display="none";
+  }else{
+    lp.style.display="block";
+  }
+}
+setInterval(updateLPVisibility,500);
+</script>
+
 </body>
 </html>
