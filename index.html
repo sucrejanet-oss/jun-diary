@@ -2052,7 +2052,7 @@ window.addEventListener("load",createFireflies);
 <div id="lpPlayer">
   <div class="lp-glow"></div>
   <div class="lp-moon">🌙</div>
-  <img id="lpFrame" src="lpf1.png">
+  <img id="lpFrame" src="lp_static.png">
 </div>
 <audio id="lpAudio"></audio>
 
@@ -2063,20 +2063,15 @@ const lpPlayer=document.getElementById("lpPlayer");
 const lpFrame=document.getElementById("lpFrame");
 const lpAudio=document.getElementById("lpAudio");
 
-const frames=[
-"lpf1.png","lpf2.png","lpf3.png","lpf4.png",
-"lpfm1.png","lpfm2.png","lpfm3.png","lpfm4.png",
-"lpm1.png","lpm2.png","lpm3.png","lpm4.png",
-"lps1.png","lps2.png","lps3.png","lps4.png"
-];
+
 
 const playlist=["musicboxA.mp3","musicboxB.mp3"];
 
-let frameIndex = 0;
+
 let musicIndex=0;
 let playing=false;
     
-let anim=null;
+
 let noteTimer=null;
 
 /* floating notes */
@@ -2114,19 +2109,17 @@ function createSpark(){
   setTimeout(()=>star.remove(),2000);
 }
 
+
 function toggleLP(){
 
   if(!playing){
 
+    lpFrame.src="lp_anim.gif";
+
     lpAudio.src=playlist[musicIndex];
     lpAudio.play().catch(()=>{});
 
-    anim=setInterval(()=>{ if(Math.random()<0.6) createNote();
-      frameIndex=(frameIndex+1)%frames.length;
-      lpFrame.src=frames[frameIndex];
-    },180);
-
-    noteTimer=setInterval(()=>{ if(Math.random()<0.6) createNote();
+    noteTimer=setInterval(()=>{
       createNote();
       if(Math.random()<0.6)createSpark();
     },700);
@@ -2135,15 +2128,17 @@ function toggleLP(){
 
   }else{
 
+    lpFrame.src="lp_static.png";
+
     lpAudio.pause();
-    clearInterval(anim);
     clearInterval(noteTimer);
+
     playing=false;
-    
 
   }
 
 }
+
 
 lpPlayer.addEventListener("click",toggleLP);
 
